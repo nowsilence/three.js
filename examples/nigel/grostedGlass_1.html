@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - buffergeometry - lines</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+	<body>
+
+		<div id="container"></div>
+		<div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - buffergeometry - lines</div>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../../build/three.module.js",
+					"three/addons/": "../jsm/"
+				}
+			}
+		</script>
+
+		<script type="module">
+            // Satin Glass Effect
+			import * as THREE from 'three';
+
+			import Stats from 'three/addons/libs/stats.module.js';
+
+			let container, stats, clock;
+
+			let camera, scene, renderer, renderTarget, glass;
+
+			let line;
+
+			const segments = 10000;
+			const r = 800;
+			let t = 0;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.getElementById( 'container' );
+
+				//
+
+				camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 1, 4000 );
+				camera.position.z = 2;
+
+				scene = new THREE.Scene();
+
+				clock = new THREE.Clock();
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				container.appendChild( renderer.domElement );
+
+				//
+
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+				renderTarget = new THREE.WebGLRenderTarget(
+                    window.innerWidth / 2, // 渲染目标（降低分辨率以提高性能）
+                    window.innerHeight / 2, 
+                    {
+                        minFilter: THREE.LinearFilter,
+                        magFilter: THREE.LinearFilter,
+                        format: THREE.RGBAFormat
+                    }
+                );
+                
+                initGlass();
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+            function initGlass() {
+                const vertexShader = ` 
+                    varying vec2 vUv;
+                    void main(){
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }`
+
+                const fragmentShader = `
+
+
+                    varying vec2 vUv;
+                    uniform sampler2D tDiffuse;
+                    uniform vec2 vScreenSize;
+                    uniform float fRadius;
+
+                    float rand(vec2 co) {
+                        float a = fract(dot(co, vec2(2.067390879775102, 12.451168662908249))) - 0.5;
+                        float s = a * (6.182785114200511 + a * a * (-38.026512460676566 + a * a * 53.392573080032137));
+                        float t = fract(s * 43758.5453);
+                        return t;
+                    }
+
+                    void main() {
+                    float x = (vUv.x * vScreenSize.x) + rand(vUv) * fRadius * 2.0 - fRadius;
+                    float y = (vUv.y * vScreenSize.y) + rand(vec2(vUv.y, vUv.x)) * fRadius * 2.0 - fRadius;
+                    vec4 textureColor = texture2D(tDiffuse, vec2(x, y) / vScreenSize);
+                    gl_FragColor = textureColor;
+                 }`;
+                
+                 const uniforms = {
+
+                    tDiffuse: { type: 't', value: new THREE.TextureLoader().load('../textures/758px-Canestra_di_frutta_(Caravaggio).jpg') },
+                    vScreenSize: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                    fRadius: { type: "f", value: 50.0 },
+                }
+
+                const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+
+                const geometry = new THREE.PlaneGeometry();
+
+                const mesh = new THREE.Mesh(geometry, material);
+
+                scene.add(mesh);
+
+                glass = mesh;
+                
+            }
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+				renderer.render( scene, camera );
+			}
+
+		</script>
+
+	</body>
+</html>
