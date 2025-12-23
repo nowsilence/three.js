@@ -2,7 +2,7 @@ export default /* glsl */`
 #define PI 3.141592653589793
 #define PI2 6.283185307179586
 #define PI_HALF 1.5707963267948966
-#define RECIPROCAL_PI 0.3183098861837907
+#define RECIPROCAL_PI 0.3183098861837907  // 1 / π
 #define RECIPROCAL_PI2 0.15915494309189535
 #define EPSILON 1e-6
 
@@ -114,8 +114,11 @@ vec2 equirectUv( in vec3 dir ) {
 }
 
 vec3 BRDF_Lambert( const in vec3 diffuseColor ) {
-
+    // 输入diffuseColor：材质的反照率（表面固有的颜色，如物体的基础色）。
+    // 朗伯模型的BRDF值 = 反照率 / π
+    // 除以π是为了能量守恒（确保反射光总能量不超过入射光）
 	return RECIPROCAL_PI * diffuseColor;
+    // 输出：朗伯 BRDF 的计算结果，用于后续与入射光强度、光线与法线夹角的余弦值（dot(normal, lightDir)）相乘，得到最终的漫反射贡献。
 
 } // validated
 

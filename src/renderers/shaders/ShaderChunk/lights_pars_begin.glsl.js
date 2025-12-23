@@ -46,7 +46,7 @@ vec3 getLightProbeIrradiance( const in vec3 lightProbe[ 9 ], const in vec3 norma
 }
 
 vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
-
+    // 漫反射系数
 	vec3 irradiance = ambientLightColor;
 
 	return irradiance;

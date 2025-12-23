@@ -159,7 +159,7 @@ export const ObjectSpaceNormalMap = 1;
 // Color space string identifiers, matching CSS Color Module Level 4 and WebGPU names where available.
 export const NoColorSpace = '';
 export const SRGBColorSpace = 'srgb';
-export const LinearSRGBColorSpace = 'srgb-linear';
+export const LinearSRGBColorSpace = 'srgb-linear'; // LinearSRGBColorSpace 则是 去除了伽马校正的 sRGB，颜色值直接表示物理光强的线性关系
 export const DisplayP3ColorSpace = 'display-p3';
 export const LinearDisplayP3ColorSpace = 'display-p3-linear';
 

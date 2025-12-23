@@ -14,7 +14,8 @@ float D_BlinnPhong( const in float shininess, const in float dotNH ) {
 }
 
 vec3 BRDF_BlinnPhong( const in vec3 lightDir, const in vec3 viewDir, const in vec3 normal, const in vec3 specularColor, const in float shininess ) {
-
+    // BRDF（双向反射分布函数）的标准结构（F・G・D）
+    // F = 菲涅尔项、G = 几何遮挡项、D = 微面元分布项）
 	vec3 halfDir = normalize( lightDir + viewDir );
 
 	float dotNH = saturate( dot( normal, halfDir ) );

@@ -3,7 +3,7 @@ class AudioAnalyser {
 	constructor( audio, fftSize = 2048 ) {
 
 		this.analyser = audio.context.createAnalyser();
-		this.analyser.fftSize = fftSize;
+		this.analyser.fftSize = fftSize; // 快速傅里叶变换的大小
 
 		this.data = new Uint8Array( this.analyser.frequencyBinCount );
 

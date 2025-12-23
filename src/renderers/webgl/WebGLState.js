@@ -502,6 +502,18 @@ function WebGLState( gl ) {
 
 			if ( drawBuffers[ 0 ] !== gl.BACK ) {
 
+                // gl.cullFace(gl.BACK) 表示剔除背景面
+                /**
+                 * 重新定向到默认帧缓冲区的后台缓冲区；
+                 * 默认帧缓冲区是浏览器为 <canvas> 自动创建的缓冲区，包含前台、后台两个缓冲区（双缓冲机制）：
+                 * 后台缓冲区：实际绘制的区域，绘制完成前不会显示；
+                 * 前台缓冲区：当前屏幕显示的内容；
+                 * 绘制完成后，浏览器会自动交换前后台缓冲区，让绘制结果显示在屏幕上。
+                 * 只有绑定默认缓冲区（bindFramebuffer(null)）时，gl.drawBuffers(【gl.BACK】) 才有意义。
+                 * 默认缓冲区只有 gl.BACK 这一个合法的输出目标，不能配置 COLOR_ATTACHMENT0/COLOR_ATTACHMENT1 等（这些是自定义 FBO 的附件）；
+                 * 而自定义 FBO 不能使用 gl.BACK，只能配置 COLOR_ATTACHMENTn
+                 * 如果之前在默认缓冲区里修改过输出规则（比如误配了 MRT），就需要用 gl.drawBuffers([gl.BACK]) 恢复规则：
+                 */
 				drawBuffers[ 0 ] = gl.BACK;
 
 				needsUpdate = true;
@@ -511,9 +523,14 @@ function WebGLState( gl ) {
 		}
 
 		if ( needsUpdate ) {
-
+            /**
+             * 用来设置片元着色器输出与帧缓冲区颜色附件的映射关系：
+             * 传统渲染中，片元着色器只能输出 gl_FragColor 到默认的 COLOR_ATTACHMENT0；
+             * 通过 gl.drawBuffers，可以让 gl_FragData[0]、gl_FragData[1]... 分别对应到 COLOR_ATTACHMENT0、COLOR_ATTACHMENT1...，实现一次绘制输出多组数据。
+             */
 			gl.drawBuffers( drawBuffers );
-
+            // 传统单目标渲染（等价于默认行为）
+            // gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
 		}
 
 	}

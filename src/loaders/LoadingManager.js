@@ -1,7 +1,7 @@
 class LoadingManager {
 
 	constructor( onLoad, onProgress, onError ) {
-
+        // 用来全局监听，并不提供加载功能，
 		const scope = this;
 
 		let isLoading = false;

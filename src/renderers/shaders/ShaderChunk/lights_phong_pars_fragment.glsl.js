@@ -9,7 +9,7 @@ struct BlinnPhongMaterial {
 	float specularStrength;
 
 };
-
+// 相比lambert，增加了高光
 void RE_Direct_BlinnPhong( const in IncidentLight directLight, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in BlinnPhongMaterial material, inout ReflectedLight reflectedLight ) {
 
 	float dotNL = saturate( dot( geometryNormal, directLight.direction ) );
@@ -22,7 +22,7 @@ void RE_Direct_BlinnPhong( const in IncidentLight directLight, const in vec3 geo
 }
 
 void RE_IndirectDiffuse_BlinnPhong( const in vec3 irradiance, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, const in BlinnPhongMaterial material, inout ReflectedLight reflectedLight ) {
-
+    // 跟光线无关，算是环境光吧
 	reflectedLight.indirectDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );
 
 }
