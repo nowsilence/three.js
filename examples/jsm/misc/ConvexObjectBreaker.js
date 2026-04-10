@@ -76,8 +76,8 @@ class ConvexObjectBreaker {
 
 		const userData = object.userData;
 		userData.mass = mass;
-		userData.velocity = velocity.clone();
-		userData.angularVelocity = angularVelocity.clone();
+		userData.velocity = velocity.clone(); // 速度
+		userData.angularVelocity = angularVelocity.clone(); // 角速度
 		userData.breakable = breakable;
 
 	}

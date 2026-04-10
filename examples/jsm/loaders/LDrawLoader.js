@@ -18,6 +18,12 @@ import {
 	Ray
 } from 'three';
 
+/**
+ * LDraw 是乐高（LEGO）积木模型的开源标准格式，由社区维护，专门用于描述乐高积木的 3D 几何、颜色、拼搭结构等信息，广泛应用于乐高建模工具（如 LDraw、Stud.io、LeoCAD 等）。其文件类型包括：
+ * .dat：单个乐高零件的定义文件；
+ * .ldr：完整的乐高模型拼装文件（引用多个 .dat 零件）；
+ * .mpd：多模型拼装文件（包含多个子模型）。
+ */
 // Special surface finish tag types.
 // Note: "MATERIAL" tag (e.g. GLITTER, SPECKLE) is not implemented
 const FINISH_TYPE_DEFAULT = 0;

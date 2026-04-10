@@ -17,17 +17,33 @@ class PerspectiveCamera extends Camera {
 		this.isPerspectiveCamera = true;
 
 		this.type = 'PerspectiveCamera';
-
+        // 垂直视场角（有的开放平台fov可能是水平视场角，如cesium）
 		this.fov = fov;
 		this.zoom = 1;
 
 		this.near = near;
 		this.far = far;
+       
+        /**
+         * 为景深（Depth of Field / Bokeh）效果提供对焦距离，不影响普通透视投影本身。
+         * 表示相机对焦在多少距离的物体上，这个距离上的物体最清晰，离得越远越模糊。
+         * 配合 EffectComposer + DepthOfField 后期效果使用
+         */
 		this.focus = 10;
 
 		this.aspect = aspect;
+        /**
+         * {
+         *      offsetX: number,
+         *      offsetY: number,
+         *      width: number
+         *      height: number,
+         *      fullWidth: number,
+         *      fullHeight: number,
+         * }
+         */
 		this.view = null;
-
+        // 胶片宽度，默认 35mm 全画幅
 		this.filmGauge = 35;	// width of the film (default in millimeters)
 		this.filmOffset = 0;	// horizontal film offset (same unit as gauge)
 
@@ -58,15 +74,18 @@ class PerspectiveCamera extends Camera {
 
 	/**
 	 * Sets the FOV by focal length in respect to the current .filmGauge.
-	 *
+	 * 根据物理相机的「焦距 (mm)」，自动算出并设置相机的 fov（视场角）。它是物理相机 → 3D 相机的桥梁。
 	 * The default film gauge is 35, so that the focal length can be specified for
 	 * a 35mm (full frame) camera.
-	 *
+	 * 设置焦距
 	 * Values for focal length and film gauge must have the same unit.
 	 */
 	setFocalLength( focalLength ) {
-
+        // 焦距越长 → fov 越小（望远、拉近）
+        // 焦距越短 → fov 越大（广角、视野宽）
 		/** see {@link http://www.bobatkins.com/photography/technical/field_of_view.html} */
+        // const vExtentSlope = 0.5 * 胶片高度 / 焦距;
+        // fov变小，看的区域变小，显示到同一个画布上，就变大了，显得看得远了
 		const vExtentSlope = 0.5 * this.getFilmHeight() / focalLength;
 
 		this.fov = MathUtils.RAD2DEG * 2 * Math.atan( vExtentSlope );
@@ -135,6 +154,17 @@ class PerspectiveCamera extends Camera {
 	}
 
 	/**
+     * 主要用于多显示器、多窗口
+     * 比如一个大屏由很多块物理小屏幕组成，每个屏幕配一台物理机，
+     * fullWidth/fullHeight就是这个大屏的虚拟大小，w/h为每个小屏幕的宽高，绘制小屏幕的时候要加上在大屏内的偏移
+     * 每台物理都要运行同一个程序，分别设置viewOffset，如何控制视图变化，通常有一个主机把相机状态同步到其他物理机上
+     * 
+     * vr/xr 也是有两个物理屏幕的，但是比较特殊。
+     * AR/VR 设备（如 Meta、Varjo、Pico、Hololens）的渲染机制 = 单画布双视角。
+     * 但驱动它们的是同一个渲染上下文（WebXR/VR 环境）
+     * 浏览器 / 引擎给你的是 一块大 Canvas
+     * 但是也需要两个camera，并设置不同的viewoffet，配合viewport，左半屏对应左眼镜，右半屏对应右眼镜
+     * 
 	 * Sets an offset in a larger frustum. This is useful for multi-window or
 	 * multi-monitor/multi-machine setups.
 	 *
@@ -234,7 +264,7 @@ class PerspectiveCamera extends Camera {
 
 		const skew = this.filmOffset;
 		if ( skew !== 0 ) left += near * skew / this.getFilmWidth();
-
+        // 这里的left、right、top、bottom指的是近裁剪面
 		this.projectionMatrix.makePerspective( left, left + width, top, top - height, near, this.far, this.coordinateSystem );
 
 		this.projectionMatrixInverse.copy( this.projectionMatrix ).invert();

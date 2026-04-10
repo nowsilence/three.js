@@ -96,7 +96,13 @@ class Color {
 		return this;
 
 	}
-
+    /**
+     * hex会认为是SRGBColorSpace空间的，会被转换到线性空间
+     * 线性空间颜色主要用于计算，通常计算完成要转回srgb
+     * @param {*} hex 
+     * @param {*} colorSpace 
+     * @returns 
+     */
 	setHex( hex, colorSpace = SRGBColorSpace ) {
 
 		hex = Math.floor( hex );
@@ -110,7 +116,14 @@ class Color {
 		return this;
 
 	}
-
+    /**
+     * 默认情况下颜色不会转换，rgb会被认为是线性空间的
+     * @param {*} r 
+     * @param {*} g 
+     * @param {*} b 
+     * @param {*} colorSpace 
+     * @returns 
+     */
 	setRGB( r, g, b, colorSpace = ColorManagement.workingColorSpace ) {
 
 		this.r = r;

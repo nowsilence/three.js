@@ -62,7 +62,7 @@ export const ColorManagement = {
 
 	enabled: true,
 
-	_workingColorSpace: LinearSRGBColorSpace,
+	_workingColorSpace: LinearSRGBColorSpace, // 默认线性颜色空间
 
 	get workingColorSpace() {
 
@@ -90,6 +90,7 @@ export const ColorManagement = {
 
 		}
 
+        
 		const sourceToReference = COLOR_SPACES[ sourceColorSpace ].toReference;
 		const targetFromReference = COLOR_SPACES[ targetColorSpace ].fromReference;
 
@@ -132,6 +133,19 @@ export function SRGBToLinear( c ) {
 
 }
 
+/**
+ * sRGB 的伽马编码不是纯 1/2.2 幂函数，而是分段函数，这个函数完全对齐了行业标准：
+ * 1. 分段阈值：0.0031308
+ * 这是 sRGB 标准定义的临界值：
+ * 当线性 RGB 值 c < 0.0031308 时：属于极低亮度区域，用线性公式 c * 12.92 计算，避免幂函数在极小值下的精度失真；
+ * 当线性 RGB 值 c ≥ 0.0031308 时：属于常规亮度区域，用伽马幂函数计算，等效 γ≈2.2。
+ * 2. 关键数值的含义
+ * 0.41666：是 1/2.4 的近似值（1÷2.4≈0.416666...），这是 sRGB 标准中定义的伽马指数（而非直接用 1/2.2）；
+ * 1.055 和 -0.055：是 sRGB 标准的校准系数，用于修正幂函数的偏差，让转换结果更贴合人眼感知；
+ * 12.92：低亮度区的线性系数，是 sRGB 标准规定的固定值（由分段函数的连续性推导而来）。
+ * @param {*} c 
+ * @returns 
+ */
 export function LinearToSRGB( c ) {
 
 	return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;

@@ -418,6 +418,7 @@ function WebGLBindingStates( gl, attributes ) {
 
 						gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
 
+                        // 针对矩阵的设置，例如mat4会占用连续的4个location
 						for ( let i = 0; i < programAttribute.locationSize; i ++ ) {
 
 							vertexAttribPointer(
@@ -425,7 +426,7 @@ function WebGLBindingStates( gl, attributes ) {
 								size / programAttribute.locationSize,
 								type,
 								normalized,
-								size * bytesPerElement,
+								size * bytesPerElement, // 步长 例如mat4，每个location的步长一样，但是offse不一样
 								( size / programAttribute.locationSize ) * i * bytesPerElement,
 								integer
 							);
