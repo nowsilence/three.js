@@ -41,8 +41,17 @@ function WebGLBufferRenderer( gl, extensions, info ) {
 			}
 
 		} else {
-
-			extension.multiDrawArraysWEBGL( mode, starts, 0, counts, 0, drawCount );
+            // shader内有gl_DrawID对应当前是第几次渲染，一般不用，绘制数量变化gl_DrawID跟物体不同始终对应上（three不使用gl_DrawID的原因可能还有有些浏览器不支持，所以统一用了纹理）
+            // three这里是使用的纹理，并把batchId作为顶点属性传入进去的
+            // 这里的starts、counts数组每次渲染调用，都会重新上传数据，没有缓存，数量小（<100）无所谓。 数量大（>1000）每帧都有成本，且无法省略。
+			extension.multiDrawArraysWEBGL(
+                mode,
+                starts, // 每段起始索引列表
+                0, // starts 起始偏移
+                counts, // 每段顶点数量列表 跟starts对应
+                0, // counts 起始偏移
+                drawCount // 取几组数组
+            );
 
 			let elementCount = 0;
 			for ( let i = 0; i < drawCount; i ++ ) {

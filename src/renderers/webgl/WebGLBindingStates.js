@@ -260,7 +260,9 @@ function WebGLBindingStates( gl, attributes ) {
 		}
 
 		if ( attributeDivisors[ attribute ] !== meshPerAttribute ) {
-
+            // 只要是实例属性必须要设置
+            // 且至少有一个属性 divisor=0（普通顶点属性），否则报错
+            // divisor 除数，指的是几个instance，更新一次属性，
 			gl.vertexAttribDivisor( attribute, meshPerAttribute );
 			attributeDivisors[ attribute ] = meshPerAttribute;
 
@@ -401,7 +403,7 @@ function WebGLBindingStates( gl, attributes ) {
 							}
 
 							if ( object.isInstancedMesh !== true && geometry._maxInstanceCount === undefined ) {
-
+                                // 用的是第一个属性的count，这个地方有风险，如果geometry不止一个InstancedBufferAttribute,它们的数量又不相等
 								geometry._maxInstanceCount = geometryAttribute.meshPerAttribute * geometryAttribute.count;
 
 							}
@@ -423,7 +425,7 @@ function WebGLBindingStates( gl, attributes ) {
 
 							vertexAttribPointer(
 								programAttribute.location + i,
-								size / programAttribute.locationSize,
+								size / programAttribute.locationSize, // 每个location 每个顶点使用的分量数量
 								type,
 								normalized,
 								size * bytesPerElement, // 步长 例如mat4，每个location的步长一样，但是offse不一样

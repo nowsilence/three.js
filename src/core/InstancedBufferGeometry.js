@@ -9,6 +9,7 @@ class InstancedBufferGeometry extends BufferGeometry {
 		this.isInstancedBufferGeometry = true;
 
 		this.type = 'InstancedBufferGeometry';
+        // 若instanceCount未设置，实际渲染的数量为第一个InstanceBufferAttribute: attr.meshPerAttribute * attr.count;
 		this.instanceCount = Infinity;
 
 	}

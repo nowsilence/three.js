@@ -50,8 +50,16 @@ function WebGLIndexedBufferRenderer( gl, extensions, info ) {
 			}
 
 		} else {
-
-			extension.multiDrawElementsWEBGL( mode, counts, 0, type, starts, 0, drawCount );
+            // 注释参见 WebGLBufferRenderer
+			extension.multiDrawElementsWEBGL( 
+                mode, 
+                counts, // counts 每个批次有多少索引需要绘制
+                0, // countsOffset 从counts哪个位置开始渲染，countsOffset + drawCount < counts.length
+                type, // 索引数据类型
+                starts, // offsets 每段字节偏移，长度 ≥ drawCount
+                0,  // offsetsOffset 从 offsets 第几个元素开始读，通常 0
+                drawCount, // 渲染几个批次
+            );
 
 			let elementCount = 0;
 			for ( let i = 0; i < drawCount; i ++ ) {

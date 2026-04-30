@@ -1,5 +1,6 @@
 export default /* glsl */`
 #ifdef USE_BATCHING
+    // const ID_ATTR_NAME = 'batchId'; 在BatchMesh里创建了batch顶点属性
 	attribute float batchId;
 	uniform highp sampler2D batchingTexture;
 	mat4 getBatchingMatrix( const in float i ) {
