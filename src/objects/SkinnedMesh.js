@@ -29,7 +29,13 @@ class SkinnedMesh extends Mesh {
 		this.isSkinnedMesh = true;
 
 		this.type = 'SkinnedMesh';
-
+        /**
+         * bindMatrixInverse 
+         * 
+         * AttachedBindMode  每帧等于当前 matrixWorld 的逆。即蒙皮结果始终位于网格自身坐标系，网格的位移/旋转/缩放会带动整个蒙皮模型（像普通 Mesh 一样跟随父节点变换）。这是 99% 场景的用法。
+         * DetachedBindMode  固定为 bind() 时记录的 bindMatrix 的逆，不再随 matrixWorld 变化。即蒙皮结果落在绑定姿势时的固定坐标系中，网格对象自身的世界变换不再影响蒙皮——完全由骨骼（skeleton）驱动。
+         * attached = 蒙皮跟随 Mesh 变换；detached = 蒙皮只跟骨骼走，忽略 Mesh 自身的世界矩阵。
+         */
 		this.bindMode = AttachedBindMode;
 		this.bindMatrix = new Matrix4();
 		this.bindMatrixInverse = new Matrix4();
@@ -148,7 +154,7 @@ class SkinnedMesh extends Mesh {
 	}
 
 	bind( skeleton, bindMatrix ) {
-
+        // 参见：webgl_animation_multiple.html
 		this.skeleton = skeleton;
 
 		if ( bindMatrix === undefined ) {

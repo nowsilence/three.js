@@ -83,7 +83,7 @@ class Skeleton {
 
 	pose() {
 
-		// recover the bind-time world matrices
+		// recover the bind-time world matrices 把骨骼恢复到"绑定姿态"（bind pose / rest pose），即模型绑定骨骼时的初始姿势
 
 		for ( let i = 0, il = this.bones.length; i < il; i ++ ) {
 
@@ -130,15 +130,49 @@ class Skeleton {
 		const boneInverses = this.boneInverses;
 		const boneMatrices = this.boneMatrices;
 		const boneTexture = this.boneTexture;
-
+        // 骨骼动画修改的是每个骨骼的：position、quaternion、scale
 		// flatten bone matrices to array
 
 		for ( let i = 0, il = bones.length; i < il; i ++ ) {
 
 			// compute the offset between the current and the original transform
+            /**
+             * B_bind：把骨头本地坐标里的点，映射到世界坐标（绑定姿态下）。
+             * B_now：把骨头本地坐标里的点，映射到世界坐标（当前姿态下）。
+             * B_bind⁻¹（逆）：把世界坐标的点，退回骨头本地坐标——也就是「撤销」绑定姿态的变换。
+             * 
+             * 点 q，它死死焊在骨头上, 在骨头本地坐标里坐标永远不变。
+             * 绑定姿态时，它的世界位置：p_bind = B_bind · q
+             * 当前姿态时，它的世界位置：p_now  = B_now  · q
+             * 
+             * 从绑定姿态到当前姿态，这个点怎么动, 需要个变化M，使得 p_now = M · p_bind。
+             * 从第一式解出 q = B_bind⁻¹ · p_bind，代入第二式
+             * p_now = B_now · ( B_bind⁻¹ · p_bind )
+             *       = ( B_now · B_bind⁻¹ ) · p_bind
+             * M = B_now · B_bind⁻¹
+             * 
+             * // bindMatrix、bindMatrixInverse为SkinnedMesh属性
+             * vec3 transformed = vec3( position ); // 【SkinnedMesh 本地空间】
+             * mat4 boneMatX = getBoneMatrix( skinIndex.x );
+	         * mat4 boneMatY = getBoneMatrix( skinIndex.y );
+	         * mat4 boneMatZ = getBoneMatrix( skinIndex.z );
+	         * mat4 boneMatW = getBoneMatrix( skinIndex.w );
+             * 
+	         * vec4 skinVertex = bindMatrix * vec4( transformed, 1.0 ); // 变成【绑定空间 = 绑定时的世界空间】
+             * 
+	         * vec4 skinned = vec4( 0.0 );
+	         * skinned += boneMatX * skinVertex * skinWeight.x; // 当前帧的世界空间
+	         * skinned += boneMatY * skinVertex * skinWeight.y;
+	         * skinned += boneMatZ * skinVertex * skinWeight.z;
+	         * skinned += boneMatW * skinVertex * skinWeight.w;
+             * 
+	         * transformed = ( bindMatrixInverse * skinned ).xyz; //  变回【SkinnedMesh 本地空间】
+             * mvPosition = modelViewMatrix * mvPosition; 再执行这行代码之前，会根据权重
+             */
 
+           
 			const matrix = bones[ i ] ? bones[ i ].matrixWorld : _identityMatrix;
-
+            // _offsetMatrix的作用是输入绑定空间的一点p_bind输出当前姿态下世界坐标的点p_now
 			_offsetMatrix.multiplyMatrices( matrix, boneInverses[ i ] );
 			_offsetMatrix.toArray( boneMatrices, i * 16 );
 

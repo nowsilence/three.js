@@ -75,7 +75,15 @@ class Mesh extends Object3D {
 	updateMorphTargets() {
 
 		const geometry = this.geometry;
-
+        /**
+         * morphAttributes里面存储position/normal/color数据
+         * morphAttributes.position里面又存放了多个bufferAttribute，每个bufferAttribute对应一个morphTarget，bufferAttribute长度与geometry.attributes.position长度相同
+         * 一个morphTarget对应一种动画可能是smile、cry、eyeQuint等，
+         * 动画播放的时候修改的是morphTargetInfluences权重，一个轨道对应一个morphTargetInfluences权重，
+         * 动画可以只改一个 target 的权重，也完全可以（而且常会）同时改多个；同一帧里多少个 target 有权重，取决于当时在播的 track 有多少条、且它们的关键帧值不为 0。
+         * 比如「嘴巴张开」一个 track 把 mouthOpen 从 0 推到 1，其他权重保持 0。这种确实「只改一个」
+         * 复合表情（更常见）：一个「微笑」clip 内部其实同时驱动好几个 target——mouthSmile、eyeSquint、cheekRaise 一起动，才凑出一个自然的笑。这时同一时刻改了多个权重。
+         */
 		const morphAttributes = geometry.morphAttributes;
 		const keys = Object.keys( morphAttributes );
 
