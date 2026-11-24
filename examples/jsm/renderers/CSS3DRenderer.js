@@ -14,7 +14,7 @@ const _quaternion = new Quaternion();
 const _scale = new Vector3();
 
 class CSS3DObject extends Object3D {
-
+    // 可任意旋转
 	constructor( element = document.createElement( 'div' ) ) {
 
 		super();
@@ -57,13 +57,13 @@ class CSS3DObject extends Object3D {
 }
 
 class CSS3DSprite extends CSS3DObject {
-
+    // 正对相机，可以缩放
 	constructor( element ) {
 
 		super( element );
 
 		this.isCSS3DSprite = true;
-
+        // 只能旋转2D，rotation2D为旋转弧度，绕相机轴逆时针
 		this.rotation2D = 0;
 
 	}

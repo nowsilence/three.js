@@ -7,6 +7,8 @@ import {
 
 /**
  * This is a class to check whether objects are in a selection area in 3D space
+ * 起点和终点在屏幕上生成一个矩形范围，根据这个矩形范围会生成一个frustum，
+ * 只是判断对象的包围盒的中心点在selection区域内
  */
 
 const _frustum = new Frustum();

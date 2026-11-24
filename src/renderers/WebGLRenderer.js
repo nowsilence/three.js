@@ -137,8 +137,9 @@ class WebGLRenderer {
 		this.sortObjects = true;
 
 		// user-defined clipping
-
+    // 全局裁剪平面，对所有材质生效, 与localClippingEnabled无论是false还是true，都生效
 		this.clippingPlanes = [];
+    // localClippingEnabled开启，material.clippingPlanes生效，local的作用范围局限于材质，而不是指坐标空间
 		this.localClippingEnabled = false;
 
 		// physically based shading

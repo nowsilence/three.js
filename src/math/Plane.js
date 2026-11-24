@@ -8,7 +8,7 @@ const _normalMatrix = /*@__PURE__*/ new Matrix3();
 class Plane {
 
 	constructor( normal = new Vector3( 1, 0, 0 ), constant = 0 ) {
-
+    // n·p + c = 0
 		this.isPlane = true;
 
 		// normal is assumed to be normalized
@@ -161,7 +161,7 @@ class Plane {
 	}
 
 	coplanarPoint( target ) {
-
+    // 平面上原点距离平面最近的点
 		return target.copy( this.normal ).multiplyScalar( - this.constant );
 
 	}

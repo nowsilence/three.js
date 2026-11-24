@@ -161,8 +161,8 @@
 
 							stencilWrite: true,
 							stencilRef: 0,
-							stencilFunc: THREE.NotEqualStencilFunc,
-							stencilFail: THREE.ReplaceStencilOp,
+							stencilFunc: THREE.NotEqualStencilFunc, // stencilRef和stencilFunc连起来用，不等于stencilRef即0，则写入，同时写入颜色和模版值
+							stencilFail: THREE.ReplaceStencilOp, // 对应 WebGL 的 gl.REPLACE，当 stencil 操作被触发时，把当前像素的 stencil 值替换成 stencilRef。
 							stencilZFail: THREE.ReplaceStencilOp,
 							stencilZPass: THREE.ReplaceStencilOp,
 
@@ -180,7 +180,6 @@
 					poGroup.add( po );
 					planeObjects.push( po );
 					scene.add( poGroup );
-
 				}
 
 				const material = new THREE.MeshStandardMaterial( {
@@ -194,7 +193,7 @@
 
 				} );
 
-				// add the color
+				// add the color渲染所有面正面的部分
 				const clippedColorFront = new THREE.Mesh( geometry, material );
 				clippedColorFront.castShadow = true;
 				clippedColorFront.renderOrder = 6;
@@ -294,10 +293,10 @@
 				}
 
 				for ( let i = 0; i < planeObjects.length; i ++ ) {
-
+          // 使渲染平面和裁剪平面重合
 					const plane = planes[ i ];
 					const po = planeObjects[ i ];
-					plane.coplanarPoint( po.position );
+					plane.coplanarPoint( po.position ); // 渲染平面的大小和位置都影响裁剪面的渲染
 					po.lookAt(
 						po.position.x - plane.normal.x,
 						po.position.y - plane.normal.y,

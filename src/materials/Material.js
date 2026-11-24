@@ -49,7 +49,7 @@ class Material extends EventDispatcher {
 		this.stencilZFail = KeepStencilOp;
 		this.stencilZPass = KeepStencilOp;
 		this.stencilWrite = false;
-
+    // 要让材质上的裁剪平面生效，还必须设置 renderer.localClippingEnabled = true
 		this.clippingPlanes = null;
 		this.clipIntersection = false;
 		this.clipShadows = false;
@@ -66,7 +66,7 @@ class Material extends EventDispatcher {
 
 		this.dithering = false;
 
-		this.alphaToCoverage = false;
+		this.alphaToCoverage = false; // 将片元 alpha 转换为 MSAA 采样覆盖率。
 		this.premultipliedAlpha = false;
 		this.forceSinglePass = false;
 
