@@ -59,7 +59,9 @@ class Material extends EventDispatcher {
 		this.colorWrite = true;
 
 		this.precision = null; // override the renderer's default precision for this material
-
+    // offset=factor×m+units×r
+    // offset 小于0表示更靠近相机，大于0远离相机，offset会被加到片元的深度值上，深度值越小越靠近相机
+    // r 由webgl决定，m表示斜率，一个面正对相机，投到屏幕上的相邻两个像素实际的距离较小，则斜率小，若此面斜着对着相机，相邻像素之间的距离大则斜率大
 		this.polygonOffset = false;
 		this.polygonOffsetFactor = 0;
 		this.polygonOffsetUnits = 0;

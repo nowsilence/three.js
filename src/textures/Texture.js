@@ -61,7 +61,8 @@ class Texture extends EventDispatcher {
 		this.premultiplyAlpha = false;
 		this.flipY = true;
 		this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
-
+    // 默认为NoColorSpace，跳过颜色空间转换
+    // 试用法线贴图、粗糙度贴图），不要对它做任何转换
 		this.colorSpace = colorSpace;
 
 		this.userData = {};

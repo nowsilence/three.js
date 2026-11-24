@@ -37,7 +37,7 @@ class DecalGeometry extends BufferGeometry {
 		const plane = new Vector3();
 
 		// this matrix represents the transformation of the decal projector
-
+    // 和空间，原点在position位置，把其他坐标系转换到这个坐标系
 		const projectorMatrix = new Matrix4();
 		projectorMatrix.makeRotationFromEuler( orientation );
 		projectorMatrix.setPosition( position );
@@ -84,7 +84,7 @@ class DecalGeometry extends BufferGeometry {
 
 					vertex.fromBufferAttribute( positionAttribute, index.getX( i ) );
 					normal.fromBufferAttribute( normalAttribute, index.getX( i ) );
-
+          // 把法线和顶点都转换到projector空间
 					pushDecalVertex( decalVertices, vertex, normal );
 
 				}
@@ -105,7 +105,7 @@ class DecalGeometry extends BufferGeometry {
 			}
 
 			// second, clip the geometry so that it doesn't extend out from the projector
-
+      // 按size的范围裁剪
 			decalVertices = clipGeometry( decalVertices, plane.set( 1, 0, 0 ) );
 			decalVertices = clipGeometry( decalVertices, plane.set( - 1, 0, 0 ) );
 			decalVertices = clipGeometry( decalVertices, plane.set( 0, 1, 0 ) );
@@ -127,7 +127,7 @@ class DecalGeometry extends BufferGeometry {
 				);
 
 				// transform the vertex back to world space
-
+        // 转换到世界坐标
 				decalVertex.position.applyMatrix4( projectorMatrix );
 
 				// now create vertex and normal buffer data
@@ -153,7 +153,7 @@ class DecalGeometry extends BufferGeometry {
 		}
 
 		function clipGeometry( inVertices, plane ) {
-
+      // 做裁剪 在size范围内，如果有一个顶点在三角形内就需要做三角形裁剪
 			const outVertices = [];
 
 			const s = 0.5 * Math.abs( size.dot( plane ) );
